@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3f4f1;
+  --foreground: #16302b;
+  --ink-muted: #60736d;
+  --brand: #0d7a68;
+  --brand-dark: #075748;
+  --line: #d8e5df;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(137, 201, 178, 0.22), transparent 24%),
+    radial-gradient(circle at right center, rgba(236, 178, 112, 0.18), transparent 18%),
+    var(--background);
+  color: var(--foreground);
+  font-family: "Georgia", "Times New Roman", serif;
+}
+
+* { box-sizing: border-box; }
+button, input, textarea, select { font: inherit; }
+
+.hero-card {
+  transition: transform 220ms ease, box-shadow 220ms ease;
+}
+
+.hero-card:hover {
+  transform: translateY(-6px) rotate(-0.4deg);
+  box-shadow: 0 36px 80px rgba(27, 87, 74, 0.18);
+}
+
+@keyframes floatSlow {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes floatSlowAlt {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-14px); }
+}
+
+.float-slow {
+  animation: floatSlow 6s ease-in-out infinite;
+}
+
+.float-delay {
+  animation: floatSlow 5.8s ease-in-out infinite;
+}
+
+.float-delay-2 {
+  animation: floatSlowAlt 6.4s ease-in-out infinite;
+}
