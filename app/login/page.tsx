@@ -7,7 +7,7 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
   const [email, setEmail] = useState("");
-  const [canResend, setCanResend] = useState(false);
+  const [canResend, setCanResend] = useState<boolean>(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setPending(true);
@@ -20,14 +20,17 @@ export default function LoginPage() {
       const supabase = createClient();
       const { data, error } = await supabase.auth.signInWithPassword({ email: submittedEmail, password: String(form.get("password")) });
       if (error || !data.user) {
-        const unconfirmed = error?.code === "email_not_confirmed" || error?.message.toLowerCase().includes("email not confirmed");
+        const unconfirmed = Boolean(
+          error?.code === "email_not_confirmed" || error?.message.toLowerCase().includes("email not confirmed"),
+        );
         setMessage(unconfirmed ? "Email belum dikonfirmasi. Periksa inbox atau kirim ulang email konfirmasi." : "Email atau kata sandi tidak sesuai.");
         setCanResend(unconfirmed);
         setPending(false);
         return;
       }
-      const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).single();
-      window.location.href = profile?.role === "admin" || profile?.role === "petugas" ? "/admin/dashboard" : "/dashboard";
+      const { data: profile } = await supabase.from("profiles").select("role").eq("id", data.user.id).maybeSingle<{ role?: string }>();
+      const role = profile?.role ?? "masyarakat";
+      window.location.href = role === "admin" || role === "petugas" ? "/admin/dashboard" : "/dashboard";
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Konfigurasi aplikasi belum siap.");
       setPending(false);

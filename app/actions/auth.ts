@@ -5,13 +5,15 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 
+export type FormActionState = { error?: string; success?: string };
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/");
 }
 
-export async function updateProfile(previousState: { error: string; success: string }, formData: FormData) {
+export async function updateProfile(previousState: FormActionState, formData: FormData): Promise<FormActionState> {
   const fullName = String(formData.get("fullName") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");

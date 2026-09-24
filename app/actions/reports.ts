@@ -5,9 +5,11 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import type { ReportStatus } from "@/types/database";
 
+export type FormActionState = { error?: string; success?: string };
+
 const reportSchema = z.object({ title: z.string().trim().min(5).max(120), description: z.string().trim().min(20), categoryId: z.string().uuid(), address: z.string().trim().min(5).max(240) });
 
-export async function createReport(_previousState: { error: string; success: string }, formData: FormData) {
+export async function createReport(_previousState: FormActionState, formData: FormData): Promise<FormActionState> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Silakan masuk terlebih dahulu." };
@@ -50,7 +52,7 @@ export async function updateReportStatus(reportId: string, status: ReportStatus,
   return { success: "Laporan diperbarui." };
 }
 
-export async function createReportResponse(_previousState: { error: string; success: string }, formData: FormData) {
+export async function createReportResponse(_previousState: FormActionState, formData: FormData): Promise<FormActionState> {
   const reportId = String(formData.get("reportId") ?? "");
   const message = String(formData.get("message") ?? "").trim();
   if (!reportId || message.length < 5 || message.length > 2000) return { error: "Balasan harus terdiri dari 5 sampai 2.000 karakter.", success: "" };
